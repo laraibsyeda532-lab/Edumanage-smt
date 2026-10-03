@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Attendance - School Management System</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 250px;
+            background: #172b4d;
+            color: white;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 0;
+            box-sizing: border-box;
+            z-index: 1000;
+        }
+
+        .sidebar .brand {
+            height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 25px;
+            background: #10213b;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar .brand h2 {
+            margin: 0;
+            font-size: 25px;
+            color: white;
+            letter-spacing: 1px;
+        }
+
+        .sidebar .brand p {
+            margin: 4px 0 0;
+            font-size: 13px;
+            color: #b9c7d9;
+        }
+
+        .sidebar > a {
+            display: flex;
+            align-items: center;
+            min-height: 52px;
+            padding: 0 25px;
+            color: #dce5f0;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            border-left: 4px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar > a:hover {
+            background: #213b61;
+            color: white;
+            border-left-color: #4da3d9;
+        }
+
+        .sidebar > a.active {
+            background: #29496f;
+            color: white;
+            border-left-color: #4da3d9;
+            font-weight: 600;
+        }
+
+        .sidebar > button {
+            width: calc(100% - 40px);
+            margin: 25px 20px 0;
+            min-height: 46px;
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 7px;
+            background: transparent;
+            color: #dce5f0;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .sidebar > button:hover {
+            background: #213b61;
+            color: white;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin-bottom: 5px;
+        }
+
+        .page-header p {
+            color: #777;
+            margin: 0;
+        }
+
+        /* =========================
+           FILTER CARD
+        ========================= */
+
+        .filter-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .filter-card h2 {
+            margin-top: 0;
+            color: #1f4e79;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 7px;
+            font-weight: 600;
+            color: #444;
+            font-size: 14px;
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 11px 12px;
+            border: 1px solid #d5dce5;
+            border-radius: 7px;
+            font-size: 14px;
+            box-sizing: border-box;
+            background: white;
+        }
+
+        .primary-btn {
+            background: #1f4e79;
+            color: white;
+            border: none;
+            padding: 11px 20px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .primary-btn:hover {
+            background: #173b5e;
+        }
+
+        /* =========================
+           SUMMARY
+        ========================= */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+
+        .summary-card .title {
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .summary-card .value {
+            font-size: 25px;
+            font-weight: bold;
+            color: #1f4e79;
+        }
+
+        .summary-card.present .value {
+            color: #198754;
+        }
+
+        .summary-card.absent .value {
+            color: #dc3545;
+        }
+
+        .summary-card.late .value {
+            color: #e67e22;
+        }
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .table-header h2 {
+            margin: 0;
+            color: #1f4e79;
+            font-size: 19px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f5f8fc;
+            color: #444;
+        }
+
+        .status-select {
+            min-width: 120px;
+            padding: 8px;
+            border: 1px solid #d5dce5;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .save-row {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #888;
+            padding: 30px 10px;
+        }
+
+        /* =========================
+           HISTORY
+        ========================= */
+
+        .history-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-top: 25px;
+        }
+
+        .history-card h2 {
+            color: #1f4e79;
+            margin-top: 0;
+        }
+
+        .history-search {
+            margin-bottom: 18px;
+        }
+
+        .history-search input {
+            width: 100%;
+            padding: 11px;
+            box-sizing: border-box;
+            border: 1px solid #d5dce5;
+            border-radius: 7px;
+        }
+
+        .percentage-box {
+            font-weight: bold;
+        }
+
+        .good {
+            color: #198754;
+        }
+
+        .warning {
+            color: #e67e22;
+        }
+
+        .danger {
+            color: #dc3545;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media(max-width: 900px) {
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media(max-width: 800px) {
+
+            .sidebar {
+                width: 220px;
+            }
+
+            .main-content {
+                margin-left: 220px;
+                padding: 20px;
+            }
+
+        }
+
+        @media(max-width: 600px) {
+
+            .sidebar {
+                width: 190px;
+            }
+
+            .sidebar > a {
+                padding: 0 18px;
+                font-size: 14px;
+            }
+
+            .sidebar .brand {
+                padding: 0 18px;
+            }
+
+            .main-content {
+                margin-left: 190px;
+                padding: 15px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <div class="brand">
+        <h2>SMS</h2>
+        <p>School Admin</p>
+    </div>
+
+    <a href="dashboard.html">
+        Dashboard
+    </a>
+
+    <a href="students.html">
+        Students
+    </a>
+
+    <a href="teachers.html">
+        Teachers
+    </a>
+
+    <a href="attendance.html" class="active">
+        Attendance
+    </a>
+
+    <a href="fees.html">
+        Fees
+    </a>
+
+    <a href="results.html">
+        Results
+    </a>
+
+    <a href="settings.html">
+        School Settings
+    </a>
+
+    <button onclick="logout()">
+        Logout
+    </button>
+
+</div>
+
+
+<!-- MAIN -->
+
+<div class="main-content">
+
+
+    <div class="page-header">
+
+        <h1>Attendance</h1>
+
+        <p>
+            Mark and manage daily student attendance.
+        </p>
+
+    </div>
+
+
+    <!-- FILTER -->
+
+    <div class="filter-card">
+
+        <h2>
+            Select Class & Date
+        </h2>
+
+
+        <div class="filter-grid">
+
+
+            <div class="form-group">
+
+                <label>
+                    Class
+                </label>
+
+                <select id="classSelect">
+
+                    <option value="">
+                        Select Class
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Section
+                </label>
+
+                <select id="sectionSelect">
+
+                    <option value="">
+                        Select Section
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Date
+                </label>
+
+                <input
+                    type="date"
+                    id="dateSelect"
+                >
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="summary-grid">
+
+
+        <div class="summary-card">
+
+            <div class="title">
+                Total Students
+            </div>
+
+            <div
+                class="value"
+                id="totalCount"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="summary-card present">
+
+            <div class="title">
+                Present
+            </div>
+
+            <div
+                class="value"
+                id="presentCount"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="summary-card absent">
+
+            <div class="title">
+                Absent
+            </div>
+
+            <div
+                class="value"
+                id="absentCount"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="summary-card late">
+
+            <div class="title">
+                Late
+            </div>
+
+            <div
+                class="value"
+                id="lateCount"
+            >
+                0
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ATTENDANCE TABLE -->
+
+    <div class="table-card">
+
+        <div class="table-header">
+
+            <h2>
+                Daily Attendance
+            </h2>
+
+            <button
+                class="primary-btn"
+                onclick="loadStudents()"
+            >
+                Load Students
+            </button>
+
+        </div>
+
+
+        <div
+            class="table-container"
+            id="attendanceContainer"
+        >
+
+            <div class="empty-message">
+
+                Select Class, Section and Date,
+                then click "Load Students".
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="save-row"
+            id="saveRow"
+            style="display:none;"
+        >
+
+            <button
+                class="primary-btn"
+                onclick="saveAttendance()"
+            >
+                Save Attendance
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- STUDENT HISTORY -->
+
+    <div class="history-card">
+
+        <h2>
+            Student Attendance History
+        </h2>
+
+
+        <div class="history-search">
+
+            <input
+                type="text"
+                id="historySearch"
+                placeholder="Search student by ID or name..."
+            >
+
+        </div>
+
+
+        <div
+            class="table-container"
+            id="historyContainer"
+        >
+
+            <div class="empty-message">
+                Search for a student to view attendance history.
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+/* =========================
+   LOGIN
+========================= */
+
+if (
+    localStorage.getItem("isLoggedIn") !== "true"
+) {
+
+    window.location.href = "index.html";
+
+}
+
+
+/* =========================
+   DATA
+========================= */
+
+let students =
+    JSON.parse(
+        localStorage.getItem("students")
+    ) || [];
+
+
+let attendance =
+    JSON.parse(
+        localStorage.getItem("attendance")
+    ) || [];
+
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const classSelect =
+    document.getElementById(
+        "classSelect"
+    );
+
+const sectionSelect =
+    document.getElementById(
+        "sectionSelect"
+    );
+
+const dateSelect =
+    document.getElementById(
+        "dateSelect"
+    );
+
+const attendanceContainer =
+    document.getElementById(
+        "attendanceContainer"
+    );
+
+
+/* =========================
+   TODAY
+========================= */
+
+dateSelect.value =
+    new Date()
+        .toISOString()
+        .split("T")[0];
+
+
+/* =========================
+   LOAD CLASSES
+========================= */
+
+function loadClasses() {
+
+    const classes =
+        [
+            ...new Set(
+                students
+                    .map(
+                        student =>
+                            String(
+                                student.className || ""
+                            ).trim()
+                    )
+                    .filter(Boolean)
+            )
+        ]
+        .sort(
+            (a,b) =>
+                a.localeCompare(
+                    b,
+                    undefined,
+                    {
+                        numeric: true
+                    }
+                )
+        );
+
+
+    classSelect.innerHTML = `
+        <option value="">
+            Select Class
+        </option>
+    `;
+
+
+    classes.forEach(className => {
+
+        classSelect.innerHTML += `
+
+            <option value="${escapeHTML(className)}">
+                ${escapeHTML(className)}
+            </option>
+
+        `;
+
+    });
+
+
+    loadSections();
+
+}
+
+
+/* =========================
+   LOAD SECTIONS
+========================= */
+
+function loadSections() {
+
+    const selectedClass =
+        classSelect.value;
+
+
+    const sections =
+        [
+            ...new Set(
+                students
+                    .filter(
+                        student =>
+                            !selectedClass ||
+                            String(student.className) ===
+                            String(selectedClass)
+                    )
+                    .map(
+                        student =>
+                            String(
+                                student.section || ""
+                            ).trim()
+                    )
+                    .filter(Boolean)
+            )
+        ]
+        .sort();
+
+
+    sectionSelect.innerHTML = `
+        <option value="">
+            Select Section
+        </option>
+    `;
+
+
+    sections.forEach(section => {
+
+        sectionSelect.innerHTML += `
+
+            <option value="${escapeHTML(section)}">
+                ${escapeHTML(section)}
+            </option>
+
+        `;
+
+    });
+
+}
+
+
+classSelect.addEventListener(
+    "change",
+    loadSections
+);
+
+
+/* =========================
+   LOAD STUDENTS
+========================= */
+
+function loadStudents() {
+
+    const selectedClass =
+        classSelect.value;
+
+    const selectedSection =
+        sectionSelect.value;
+
+    const selectedDate =
+        dateSelect.value;
+
+
+    if (
+        !selectedClass ||
+        !selectedSection ||
+        !selectedDate
+    ) {
+
+        alert(
+            "Please select Class, Section and Date."
+        );
+
+        return;
+
+    }
+
+
+    const filteredStudents =
+        students.filter(student =>
+
+            String(student.className) ===
+            String(selectedClass)
+
+            &&
+
+            String(student.section) ===
+            String(selectedSection)
+
+        );
+
+
+    if (filteredStudents.length === 0) {
+
+        attendanceContainer.innerHTML = `
+
+            <div class="empty-message">
+
+                No students found in this class and section.
+
+            </div>
+
+        `;
+
+
+        document.getElementById(
+            "saveRow"
+        ).style.display = "none";
+
+
+        updateSummary([]);
+
+        return;
+
+    }
+
+
+    let html = `
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>#</th>
+
+                    <th>Student ID</th>
+
+                    <th>Student Name</th>
+
+                    <th>Father Name</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+    `;
+
+
+    filteredStudents.forEach(
+        (student, index) => {
+
+
+            const existing =
+                attendance.find(
+                    record =>
+
+                        String(
+                            record.studentId
+                        ) ===
+                        String(student.id)
+
+                        &&
+
+                        record.date ===
+                        selectedDate
+
+                );
+
+
+            const status =
+                existing
+                    ? existing.status
+                    : "Present";
+
+
+            html += `
+
+                <tr
+                    data-student-id="${escapeHTML(student.id)}"
+                >
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(student.id)}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHTML(student.name)}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${escapeHTML(student.father || "-")}
+                    </td>
+
+                    <td>
+
+                        <select
+                            class="status-select attendance-status"
+                            data-student-id="${escapeHTML(student.id)}"
+                        >
+
+                            <option
+                                value="Present"
+                                ${status === "Present" ? "selected" : ""}
+                            >
+                                Present
+                            </option>
+
+                            <option
+                                value="Absent"
+                                ${status === "Absent" ? "selected" : ""}
+                            >
+                                Absent
+                            </option>
+
+                            <option
+                                value="Late"
+                                ${status === "Late" ? "selected" : ""}
+                            >
+                                Late
+                            </option>
+
+                        </select>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
+
+
+    html += `
+
+            </tbody>
+
+        </table>
+
+    `;
+
+
+    attendanceContainer.innerHTML =
+        html;
+
+
+    document.getElementById(
+        "saveRow"
+    ).style.display =
+        "flex";
+
+
+    addStatusListeners();
+
+    updateSummary(
+        filteredStudents
+    );
+
+}
+
+
+/* =========================
+   STATUS LISTENERS
+========================= */
+
+function addStatusListeners() {
+
+    document
+        .querySelectorAll(
+            ".attendance-status"
+        )
+        .forEach(select => {
+
+            select.addEventListener(
+                "change",
+                function() {
+
+                    updateSummaryFromTable();
+
+                }
+            );
+
+        });
+
+}
+
+
+/* =========================
+   UPDATE SUMMARY
+========================= */
+
+function updateSummary(
+    studentList
+) {
+
+    if (!studentList.length) {
+
+        document.getElementById(
+            "totalCount"
+        ).textContent = 0;
+
+        document.getElementById(
+            "presentCount"
+        ).textContent = 0;
+
+        document.getElementById(
+            "absentCount"
+        ).textContent = 0;
+
+        document.getElementById(
+            "lateCount"
+        ).textContent = 0;
+
+        return;
+
+    }
+
+
+    const selectedDate =
+        dateSelect.value;
+
+
+    let present = 0;
+    let absent = 0;
+    let late = 0;
+
+
+    studentList.forEach(student => {
+
+        const existing =
+            attendance.find(
+                record =>
+
+                    String(
+                        record.studentId
+                    ) ===
+                    String(student.id)
+
+                    &&
+
+                    record.date ===
+                    selectedDate
+            );
+
+
+        const status =
+            existing
+                ? existing.status
+                : "Present";
+
+
+        if (status === "Present")
+            present++;
+
+        if (status === "Absent")
+            absent++;
+
+        if (status === "Late")
+            late++;
+
+    });
+
+
+    document.getElementById(
+        "totalCount"
+    ).textContent =
+        studentList.length;
+
+
+    document.getElementById(
+        "presentCount"
+    ).textContent =
+        present;
+
+
+    document.getElementById(
+        "absentCount"
+    ).textContent =
+        absent;
+
+
+    document.getElementById(
+        "lateCount"
+    ).textContent =
+        late;
+
+}
+
+
+/* =========================
+   UPDATE SUMMARY FROM TABLE
+========================= */
+
+function updateSummaryFromTable() {
+
+    const selects =
+        document.querySelectorAll(
+            ".attendance-status"
+        );
+
+
+    let present = 0;
+    let absent = 0;
+    let late = 0;
+
+
+    selects.forEach(select => {
+
+        if (
+            select.value ===
+            "Present"
+        )
+            present++;
+
+        if (
+            select.value ===
+            "Absent"
+        )
+            absent++;
+
+        if (
+            select.value ===
+            "Late"
+        )
+            late++;
+
+    });
+
+
+    document.getElementById(
+        "totalCount"
+    ).textContent =
+        selects.length;
+
+
+    document.getElementById(
+        "presentCount"
+    ).textContent =
+        present;
+
+
+    document.getElementById(
+        "absentCount"
+    ).textContent =
+        absent;
+
+
+    document.getElementById(
+        "lateCount"
+    ).textContent =
+        late;
+
+}
+
+
+/* =========================
+   SAVE ATTENDANCE
+========================= */
+
+function saveAttendance() {
+
+    const selectedClass =
+        classSelect.value;
+
+    const selectedSection =
+        sectionSelect.value;
+
+    const selectedDate =
+        dateSelect.value;
+
+
+    const selects =
+        document.querySelectorAll(
+            ".attendance-status"
+        );
+
+
+    if (
+        !selectedClass ||
+        !selectedSection ||
+        !selectedDate ||
+        selects.length === 0
+    ) {
+
+        alert(
+            "Please load students first."
+        );
+
+        return;
+
+    }
+
+
+    selects.forEach(select => {
+
+        const studentId =
+            select.dataset.studentId;
+
+
+        const student =
+            students.find(
+                s =>
+                    String(s.id) ===
+                    String(studentId)
+            );
+
+
+        if (!student)
+            return;
+
+
+        const existingIndex =
+            attendance.findIndex(
+                record =>
+
+                    String(
+                        record.studentId
+                    ) ===
+                    String(studentId)
+
+                    &&
+
+                    record.date ===
+                    selectedDate
+            );
+
+
+        const record = {
+
+            id:
+                existingIndex !== -1
+                    ? attendance[
+                        existingIndex
+                    ].id
+                    : "ATT-" +
+                      Date.now() +
+                      "-" +
+                      studentId,
+
+            studentId:
+                student.id,
+
+            studentName:
+                student.name,
+
+            className:
+                student.className,
+
+            section:
+                student.section,
+
+            date:
+                selectedDate,
+
+            status:
+                select.value
+
+        };
+
+
+        if (
+            existingIndex !== -1
+        ) {
+
+            attendance[
+                existingIndex
+            ] = record;
+
+        }
+
+        else {
+
+            attendance.push(
+                record
+            );
+
+        }
+
+    });
+
+
+    localStorage.setItem(
+        "attendance",
+        JSON.stringify(attendance)
+    );
+
+
+    alert(
+        "Attendance saved successfully."
+    );
+
+
+    updateSummaryFromTable();
+
+    renderHistory();
+
+}
+
+
+/* =========================
+   HISTORY SEARCH
+========================= */
+
+const historySearch =
+    document.getElementById(
+        "historySearch"
+    );
+
+
+historySearch.addEventListener(
+    "input",
+    renderHistory
+);
+
+
+/* =========================
+   HISTORY
+========================= */
+
+function renderHistory() {
+
+    const search =
+        historySearch.value
+            .trim()
+            .toLowerCase();
+
+
+    const container =
+        document.getElementById(
+            "historyContainer"
+        );
+
+
+    if (!search) {
+
+        container.innerHTML = `
+
+            <div class="empty-message">
+                Search for a student to view attendance history.
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    const matchedStudents =
+        students.filter(student =>
+
+            String(student.id)
+                .toLowerCase()
+                .includes(search)
+
+            ||
+
+            String(student.name)
+                .toLowerCase()
+                .includes(search)
+
+        );
+
+
+    if (
+        matchedStudents.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <div class="empty-message">
+                No student found.
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    let html = "";
+
+
+    matchedStudents.forEach(student => {
+
+        const records =
+            attendance
+                .filter(
+                    record =>
+                        String(
+                            record.studentId
+                        ) ===
+                        String(student.id)
+                )
+                .sort(
+                    (a,b) =>
+                        new Date(b.date) -
+                        new Date(a.date)
+                );
+
+
+        const total =
+            records.length;
+
+
+        const present =
+            records.filter(
+                r =>
+                    r.status ===
+                    "Present"
+            ).length;
+
+
+        const absent =
+            records.filter(
+                r =>
+                    r.status ===
+                    "Absent"
+            ).length;
+
+
+        const late =
+            records.filter(
+                r =>
+                    r.status ===
+                    "Late"
+            ).length;
+
+
+        const percentage =
+            total > 0
+                ? (
+                    (
+                        present +
+                        late
+                    ) /
+                    total
+                ) * 100
+                : 0;
+
+
+        let percentageClass =
+            "good";
+
+
+        if (percentage < 75)
+            percentageClass =
+                "warning";
+
+
+        if (percentage < 60)
+            percentageClass =
+                "danger";
+
+
+        html += `
+
+            <div
+                style="
+                    margin-bottom:25px;
+                    border-bottom:1px solid #eee;
+                    padding-bottom:20px;
+                "
+            >
+
+                <h3>
+                    ${escapeHTML(student.name)}
+                    -
+                    ${escapeHTML(student.id)}
+                </h3>
+
+                <p>
+                    Class:
+                    ${escapeHTML(student.className)}
+                    /
+                    ${escapeHTML(student.section)}
+                </p>
+
+                <p>
+
+                    Total Days:
+                    <strong>${total}</strong>
+
+                    &nbsp;&nbsp;
+
+                    Present:
+                    <strong class="good">
+                        ${present}
+                    </strong>
+
+                    &nbsp;&nbsp;
+
+                    Absent:
+                    <strong class="danger">
+                        ${absent}
+                    </strong>
+
+                    &nbsp;&nbsp;
+
+                    Late:
+                    <strong class="warning">
+                        ${late}
+                    </strong>
+
+                    &nbsp;&nbsp;
+
+                    Attendance:
+                    <strong
+                        class="percentage-box ${percentageClass}"
+                    >
+                        ${percentage.toFixed(1)}%
+                    </strong>
+
+                </p>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+        `;
+
+
+        if (records.length === 0) {
+
+            html += `
+
+                <tr>
+
+                    <td colspan="2">
+                        No attendance records yet.
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
+        else {
+
+            records
+                .slice(0, 20)
+                .forEach(record => {
+
+                    let statusClass =
+                        "";
+
+                    if (
+                        record.status ===
+                        "Present"
+                    )
+                        statusClass =
+                            "good";
+
+                    if (
+                        record.status ===
+                        "Absent"
+                    )
+                        statusClass =
+                            "danger";
+
+                    if (
+                        record.status ===
+                        "Late"
+                    )
+                        statusClass =
+                            "warning";
+
+
+                    html += `
+
+                        <tr>
+
+                            <td>
+                                ${escapeHTML(
+                                    record.date
+                                )}
+                            </td>
+
+                            <td>
+
+                                <strong
+                                    class="${statusClass}"
+                                >
+                                    ${escapeHTML(
+                                        record.status
+                                    )}
+                                </strong>
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                });
+
+        }
+
+
+        html += `
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+    });
+
+
+    container.innerHTML =
+        html;
+
+}
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+function logout() {
+
+    localStorage.removeItem(
+        "isLoggedIn"
+    );
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* =========================
+   INITIAL LOAD
+========================= */
+
+loadClasses();
+
+</script>
+
+
+</body>
+</html>

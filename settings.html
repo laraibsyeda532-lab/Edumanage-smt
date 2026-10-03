@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Settings</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .settings-card {
+            max-width: 900px;
+            margin: 25px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+
+        .logo-preview {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+
+        .logo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .save-btn {
+            background: #1f4e79;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-top: 20px;
+        }
+
+        .save-btn:hover {
+            background: #163b5c;
+        }
+
+        .success-message {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            background: #dff6e4;
+            color: #1d6b35;
+            border-radius: 7px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="brand">
+        <h2>SMS</h2>
+        <p>School Admin</p>
+    </div>
+
+    <a href="dashboard.html">Dashboard</a>
+    <a href="students.html">Students</a>
+    <a href="teachers.html">Teachers</a>
+    <a href="attendance.html">Attendance</a>
+    <a href="fees.html">Fees</a>
+    <a href="results.html">Results</a>
+    <a href="settings.html" class="active">School Settings</a>
+
+    <button onclick="logout()">Logout</button>
+
+</div>
+
+
+<div class="main-content">
+
+    <div class="page-header">
+        <h1>School Settings</h1>
+        <p>Manage your school information</p>
+    </div>
+
+
+    <div class="settings-card">
+
+        <h2>School Information</h2>
+
+        <form id="settingsForm">
+
+            <div class="form-grid">
+
+                <div>
+                    <label>School Name *</label>
+                    <input
+                        type="text"
+                        id="schoolName"
+                        placeholder="Enter school name"
+                        required
+                    >
+                </div>
+
+
+                <div>
+                    <label>Phone</label>
+                    <input
+                        type="text"
+                        id="schoolPhone"
+                        placeholder="Enter school phone"
+                    >
+                </div>
+
+
+                <div>
+                    <label>Email</label>
+                    <input
+                        type="email"
+                        id="schoolEmail"
+                        placeholder="Enter school email"
+                    >
+                </div>
+
+
+                <div>
+                    <label>Principal / Head</label>
+                    <input
+                        type="text"
+                        id="principal"
+                        placeholder="Enter principal name"
+                    >
+                </div>
+
+
+                <div style="grid-column: 1 / -1;">
+                    <label>School Address</label>
+                    <textarea
+                        id="schoolAddress"
+                        rows="3"
+                        placeholder="Enter complete school address"
+                    ></textarea>
+                </div>
+
+
+                <div style="grid-column: 1 / -1;">
+                    <label>School Logo</label>
+
+                    <input
+                        type="file"
+                        id="schoolLogo"
+                        accept="image/*"
+                    >
+
+                    <div class="logo-preview" id="logoPreview">
+                        <span>No Logo</span>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <button type="submit" class="save-btn">
+                Save School Settings
+            </button>
+
+            <div class="success-message" id="successMessage">
+                School settings saved successfully!
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // Login check
+    if (localStorage.getItem("isLoggedIn") !== "true") {
+        window.location.href = "index.html";
+    }
+
+
+    const form = document.getElementById("settingsForm");
+
+    const schoolName = document.getElementById("schoolName");
+    const schoolPhone = document.getElementById("schoolPhone");
+    const schoolEmail = document.getElementById("schoolEmail");
+    const principal = document.getElementById("principal");
+    const schoolAddress = document.getElementById("schoolAddress");
+    const schoolLogo = document.getElementById("schoolLogo");
+    const logoPreview = document.getElementById("logoPreview");
+    const successMessage = document.getElementById("successMessage");
+
+
+    // Load previously saved settings
+    function loadSettings() {
+
+        const settings =
+            JSON.parse(localStorage.getItem("schoolSettings")) || {};
+
+        schoolName.value = settings.name || "";
+        schoolPhone.value = settings.phone || "";
+        schoolEmail.value = settings.email || "";
+        principal.value = settings.principal || "";
+        schoolAddress.value = settings.address || "";
+
+        if (settings.logo) {
+
+            logoPreview.innerHTML =
+                `<img src="${settings.logo}" alt="School Logo">`;
+
+        }
+    }
+
+
+    // Logo preview
+    schoolLogo.addEventListener("change", function () {
+
+        const file = this.files[0];
+
+        if (!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+
+            logoPreview.innerHTML =
+                `<img src="${event.target.result}" alt="School Logo">`;
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
+
+
+    // Save settings
+    form.addEventListener("submit", function (e) {
+
+        e.preventDefault();
+
+        const existingSettings =
+            JSON.parse(localStorage.getItem("schoolSettings")) || {};
+
+        function saveData(logoData) {
+
+            const settings = {
+
+                name: schoolName.value.trim(),
+
+                phone: schoolPhone.value.trim(),
+
+                email: schoolEmail.value.trim(),
+
+                principal: principal.value.trim(),
+
+                address: schoolAddress.value.trim(),
+
+                logo: logoData || existingSettings.logo || ""
+
+            };
+
+            localStorage.setItem(
+                "schoolSettings",
+                JSON.stringify(settings)
+            );
+
+
+            successMessage.style.display = "block";
+
+            setTimeout(function () {
+                successMessage.style.display = "none";
+            }, 3000);
+
+        }
+
+
+        const file = schoolLogo.files[0];
+
+        if (file) {
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+
+                saveData(event.target.result);
+
+            };
+
+            reader.readAsDataURL(file);
+
+        } else {
+
+            saveData("");
+
+        }
+
+    });
+
+
+    // Logout
+    function logout() {
+
+        localStorage.removeItem("isLoggedIn");
+
+        window.location.href = "index.html";
+
+    }
+
+
+    // Load data when page opens
+    loadSettings();
+
+</script>
+
+</body>
+</html>

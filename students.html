@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students - School Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 250px;
+            background: #102a43;
+            color: white;
+            padding: 25px 15px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            overflow-y: auto;
+        }
+
+        .brand {
+            text-align: center;
+            padding: 10px 0 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 20px;
+        }
+
+        .brand h2 {
+            font-size: 27px;
+            margin-bottom: 5px;
+        }
+
+        .brand p {
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        .nav a {
+            display: block;
+            color: #dbeafe;
+            text-decoration: none;
+            padding: 13px 15px;
+            margin-bottom: 6px;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: #1f4e79;
+            color: white;
+        }
+
+        .logout {
+            width: 100%;
+            border: none;
+            background: #b91c1c;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 30px;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            color: #102a43;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* CARDS */
+        .card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px rgba(15,23,42,0.04);
+        }
+
+        .card h2 {
+            color: #102a43;
+            font-size: 19px;
+            margin-bottom: 18px;
+        }
+
+        /* FORM */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 7px;
+            color: #475569;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            outline: none;
+            font-size: 14px;
+            background: white;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #1f4e79;
+        }
+
+        textarea {
+            min-height: 85px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            margin-top: 18px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .primary-btn,
+        .secondary-btn {
+            border: none;
+            padding: 11px 18px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .primary-btn {
+            background: #102a43;
+            color: white;
+        }
+
+        .primary-btn:hover {
+            background: #1f4e79;
+        }
+
+        .secondary-btn {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .secondary-btn:hover {
+            background: #cbd5e1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* SEARCH */
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .search-box input {
+            flex: 1;
+        }
+
+        /* TABLE */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px 9px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #475569;
+        }
+
+        td {
+            color: #334155;
+        }
+
+        .action-btn {
+            border: none;
+            padding: 7px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 4px;
+        }
+
+        .view-btn {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .edit-btn {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .delete-btn {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+
+        .empty {
+            text-align: center;
+            color: #94a3b8;
+            padding: 25px;
+        }
+
+        /* MODAL */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15,23,42,0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-box {
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #102a43;
+        }
+
+        .close-btn {
+            border: none;
+            background: transparent;
+            font-size: 26px;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .profile-item {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 7px;
+        }
+
+        .profile-item strong {
+            display: block;
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .profile-item span {
+            font-size: 14px;
+            color: #1e293b;
+        }
+
+        .profile-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-top: 15px;
+        }
+
+        .profile-link {
+            text-decoration: none;
+            background: #102a43;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 7px;
+            font-size: 13px;
+        }
+
+        .profile-link:hover {
+            background: #1f4e79;
+        }
+
+        .edit-note {
+            background: #eff6ff;
+            color: #1e40af;
+            padding: 10px 12px;
+            border-radius: 7px;
+            margin-bottom: 18px;
+            font-size: 13px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 950px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                min-height: auto;
+            }
+
+            .layout {
+                display: block;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+                padding: 18px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <h2>SMS</h2>
+            <p>School Admin</p>
+        </div>
+
+        <nav class="nav">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="students.html" class="active">Students</a>
+            <a href="teachers.html">Teachers</a>
+            <a href="attendance.html">Attendance</a>
+            <a href="fees.html">Fees</a>
+            <a href="results.html">Results</a>
+            <a href="settings.html">School Settings</a>
+        </nav>
+
+        <button class="logout" onclick="logout()">Logout</button>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <div class="page-header">
+            <h1>Students</h1>
+            <p>Add, search, edit and manage student records.</p>
+        </div>
+
+
+        <!-- ADD / EDIT FORM -->
+        <div class="card">
+
+            <h2 id="formTitle">Add New Student</h2>
+
+            <div id="editNote" class="edit-note hidden">
+                You are editing an existing student record.
+            </div>
+
+            <form id="studentForm">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Student ID *</label>
+                        <input
+                            type="text"
+                            id="studentId"
+                            placeholder="Enter Student ID"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Student Name *</label>
+                        <input
+                            type="text"
+                            id="studentName"
+                            placeholder="Enter student name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Father Name *</label>
+                        <input
+                            type="text"
+                            id="fatherName"
+                            placeholder="Enter father name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <input
+                            type="date"
+                            id="dob"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select id="gender">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Class *</label>
+                        <input
+                            type="text"
+                            id="className"
+                            placeholder="e.g. 8th"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Section</label>
+                        <input
+                            type="text"
+                            id="section"
+                            placeholder="e.g. A"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input
+                            type="text"
+                            id="phone"
+                            placeholder="Parent phone"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Admission Date *</label>
+                        <input
+                            type="date"
+                            id="admissionDate"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Address</label>
+                        <textarea
+                            id="address"
+                            placeholder="Enter student address"
+                        ></textarea>
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                        id="saveBtn"
+                    >
+                        Add Student
+                    </button>
+
+                    <button
+                        type="button"
+                        class="secondary-btn hidden"
+                        id="cancelEditBtn"
+                        onclick="cancelEdit()"
+                    >
+                        Cancel Edit
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- STUDENT LIST -->
+        <div class="card">
+
+            <h2>Student Records</h2>
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search by Student ID, name or class..."
+                    oninput="renderStudents()"
+                >
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Father Name</th>
+                            <th>Class</th>
+                            <th>Section</th>
+                            <th>Phone</th>
+                            <th>Admission Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="studentsBody"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- PROFILE MODAL -->
+<div class="modal" id="profileModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h2>Student Profile</h2>
+
+            <button
+                class="close-btn"
+                onclick="closeProfile()"
+            >
+                &times;
+            </button>
+        </div>
+
+
+        <div class="profile-grid">
+
+            <div class="profile-item">
+                <strong>Student ID</strong>
+                <span id="profileId"></span>
+            </div>
+
+            <div class="profile-item">
+                <strong>Student Name</strong>
+                <span id="profileName"></span>
+            </div>
+
+            <div class="profile-item">
+                <strong>Father Name</strong>
+                <span id="profileFather"></span>
+            </div>
+
+            <div class="profile-item">
+                <strong>Date of Birth</strong>
+                <span id="profileDob"></span>
+            </div>
+
+            <div class="profile-item">
+                <strong>Gender</strong>
+                <span id="profileGender"></span>
+            </div>
+
+            <div class="profile-item">
+                <strong>Class</strong>
+                <span id="profileClass"></span>
+            </div>
+
+            <div class="profile-item">
+                <strong>Section</strong>
+                <span id="profileSection"></span>
+            </div>
+
+            <div class="profile-item">
+                <strong>Phone</strong>
+                <span id="profilePhone"></span>
+            </div>
+
+            <div class="profile-item">
+                <strong>Admission Date</strong>
+                <span id="profileAdmission"></span>
+            </div>
+
+            <div class="profile-item">
+                <strong>Address</strong>
+                <span id="profileAddress"></span>
+            </div>
+
+        </div>
+
+
+        <div class="profile-actions">
+
+            <a
+                href="attendance.html"
+                class="profile-link"
+                onclick="selectStudentForPage()"
+            >
+                Attendance
+            </a>
+
+            <a
+                href="fees.html"
+                class="profile-link"
+                onclick="selectStudentForPage()"
+            >
+                Fees
+            </a>
+
+            <a
+                href="results.html"
+                class="profile-link"
+                onclick="selectStudentForPage()"
+            >
+                Results
+            </a>
+
+            <button
+                class="secondary-btn"
+                onclick="closeProfile()"
+            >
+                Close
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* LOGIN CHECK */
+
+    if (localStorage.getItem("isLoggedIn") !== "true") {
+        window.location.href = "index.html";
+    }
+
+
+    /* DATA */
+
+    let students = getData("students");
+
+    let editingId = null;
+
+    let selectedProfileId = null;
+
+
+    function getData(key) {
+
+        try {
+            return JSON.parse(localStorage.getItem(key)) || [];
+        } catch (error) {
+            return [];
+        }
+
+    }
+
+
+    function saveStudents() {
+
+        localStorage.setItem(
+            "students",
+            JSON.stringify(students)
+        );
+
+    }
+
+
+    function escapeHTML(value) {
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    function formatDate(date) {
+
+        if (!date) return "-";
+
+        const d = new Date(date);
+
+        if (isNaN(d.getTime())) return date;
+
+        return d.toLocaleDateString("en-GB");
+
+    }
+
+
+    /* RENDER STUDENTS */
+
+    function renderStudents() {
+
+        const body =
+            document.getElementById("studentsBody");
+
+        const search =
+            document
+                .getElementById("searchInput")
+                .value
+                .trim()
+                .toLowerCase();
+
+
+        const filtered = students.filter(student => {
+
+            return (
+                String(student.id || "")
+                    .toLowerCase()
+                    .includes(search)
+
+                ||
+
+                String(student.name || "")
+                    .toLowerCase()
+                    .includes(search)
+
+                ||
+
+                String(student.className || "")
+                    .toLowerCase()
+                    .includes(search)
+            );
+
+        });
+
+
+        if (filtered.length === 0) {
+
+            body.innerHTML = `
+                <tr>
+                    <td colspan="8" class="empty">
+                        No student records found.
+                    </td>
+                </tr>
+            `;
+
+            return;
+
+        }
+
+
+        body.innerHTML = filtered.map(student => {
+
+            const safeId =
+                encodeURIComponent(student.id);
+
+            return `
+                <tr>
+
+                    <td>${escapeHTML(student.id)}</td>
+
+                    <td>${escapeHTML(student.name)}</td>
+
+                    <td>${escapeHTML(student.father)}</td>
+
+                    <td>${escapeHTML(student.className)}</td>
+
+                    <td>${escapeHTML(student.section || "-")}</td>
+
+                    <td>${escapeHTML(student.phone || "-")}</td>
+
+                    <td>${formatDate(student.admissionDate)}</td>
+
+                    <td>
+
+                        <button
+                            class="action-btn view-btn"
+                            onclick="viewStudent(decodeURIComponent('${safeId}'))"
+                        >
+                            View
+                        </button>
+
+                        <button
+                            class="action-btn edit-btn"
+                            onclick="editStudent(decodeURIComponent('${safeId}'))"
+                        >
+                            Edit
+                        </button>
+
+                        <button
+                            class="action-btn delete-btn"
+                            onclick="deleteStudent(decodeURIComponent('${safeId}'))"
+                        >
+                            Delete
+                        </button>
+
+                    </td>
+
+                </tr>
+            `;
+
+        }).join("");
+
+    }
+
+
+    /* ADD / UPDATE */
+
+    document
+        .getElementById("studentForm")
+        .addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+
+            const id =
+                document.getElementById("studentId")
+                    .value
+                    .trim();
+
+            const name =
+                document.getElementById("studentName")
+                    .value
+                    .trim();
+
+            const father =
+                document.getElementById("fatherName")
+                    .value
+                    .trim();
+
+            const dob =
+                document.getElementById("dob").value;
+
+            const gender =
+                document.getElementById("gender").value;
+
+            const className =
+                document.getElementById("className")
+                    .value
+                    .trim();
+
+            const section =
+                document.getElementById("section")
+                    .value
+                    .trim();
+
+            const phone =
+                document.getElementById("phone")
+                    .value
+                    .trim();
+
+            const admissionDate =
+                document.getElementById("admissionDate").value;
+
+            const address =
+                document.getElementById("address")
+                    .value
+                    .trim();
+
+
+            if (!id || !name || !father || !className || !admissionDate) {
+
+                alert("Please fill all required fields.");
+
+                return;
+
+            }
+
+
+            /* ADD NEW */
+
+            if (editingId === null) {
+
+                const duplicate =
+                    students.some(student =>
+                        String(student.id).toLowerCase() ===
+                        id.toLowerCase()
+                    );
+
+
+                if (duplicate) {
+
+                    alert(
+                        "This Student ID already exists. Please enter a unique Student ID."
+                    );
+
+                    return;
+
+                }
+
+
+                students.push({
+
+                    id: id,
+                    name: name,
+                    father: father,
+                    dob: dob,
+                    gender: gender,
+                    className: className,
+                    section: section,
+                    phone: phone,
+                    admissionDate: admissionDate,
+                    address: address
+
+                });
+
+
+                saveStudents();
+
+                alert("Student added successfully.");
+
+            }
+
+
+            /* UPDATE EXISTING */
+
+            else {
+
+                const index =
+                    students.findIndex(student =>
+                        String(student.id) ===
+                        String(editingId)
+                    );
+
+
+                if (index === -1) {
+
+                    alert("Student record not found.");
+
+                    return;
+
+                }
+
+
+                /*
+                    Student ID is kept unchanged during edit
+                    so linked Attendance, Fees and Results
+                    remain connected correctly.
+                */
+
+                students[index] = {
+
+                    ...students[index],
+
+                    id: students[index].id,
+                    name: name,
+                    father: father,
+                    dob: dob,
+                    gender: gender,
+                    className: className,
+                    section: section,
+                    phone: phone,
+                    admissionDate: admissionDate,
+                    address: address
+
+                };
+
+
+                saveStudents();
+
+                alert("Student updated successfully.");
+
+            }
+
+
+            resetForm();
+
+            renderStudents();
+
+        });
+
+
+    /* EDIT STUDENT */
+
+    function editStudent(id) {
+
+        const student =
+            students.find(item =>
+                String(item.id) === String(id)
+            );
+
+
+        if (!student) {
+
+            alert("Student not found.");
+
+            return;
+
+        }
+
+
+        editingId = student.id;
+
+
+        document.getElementById("formTitle").textContent =
+            "Edit Student";
+
+
+        document.getElementById("editNote")
+            .classList.remove("hidden");
+
+
+        document.getElementById("studentId").value =
+            student.id || "";
+
+
+        /*
+            Student ID is locked while editing
+            because Attendance, Fees and Results
+            are linked with this ID.
+        */
+
+        document.getElementById("studentId").readOnly = true;
+
+
+        document.getElementById("studentName").value =
+            student.name || "";
+
+        document.getElementById("fatherName").value =
+            student.father || "";
+
+        document.getElementById("dob").value =
+            student.dob || "";
+
+        document.getElementById("gender").value =
+            student.gender || "";
+
+        document.getElementById("className").value =
+            student.className || "";
+
+        document.getElementById("section").value =
+            student.section || "";
+
+        document.getElementById("phone").value =
+            student.phone || "";
+
+        document.getElementById("admissionDate").value =
+            student.admissionDate || "";
+
+        document.getElementById("address").value =
+            student.address || "";
+
+
+        document.getElementById("saveBtn").textContent =
+            "Update Student";
+
+
+        document.getElementById("cancelEditBtn")
+            .classList.remove("hidden");
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+
+    /* CANCEL EDIT */
+
+    function cancelEdit() {
+
+        resetForm();
+
+    }
+
+
+    function resetForm() {
+
+        editingId = null;
+
+        document.getElementById("studentForm").reset();
+
+        document.getElementById("formTitle").textContent =
+            "Add New Student";
+
+
+        document.getElementById("editNote")
+            .classList.add("hidden");
+
+
+        document.getElementById("studentId").readOnly =
+            false;
+
+
+        document.getElementById("saveBtn").textContent =
+            "Add Student";
+
+
+        document.getElementById("cancelEditBtn")
+            .classList.add("hidden");
+
+    }
+
+
+    /* VIEW PROFILE */
+
+    function viewStudent(id) {
+
+        const student =
+            students.find(item =>
+                String(item.id) === String(id)
+            );
+
+
+        if (!student) {
+
+            alert("Student not found.");
+
+            return;
+
+        }
+
+
+        selectedProfileId = student.id;
+
+
+        document.getElementById("profileId").textContent =
+            student.id || "-";
+
+        document.getElementById("profileName").textContent =
+            student.name || "-";
+
+        document.getElementById("profileFather").textContent =
+            student.father || "-";
+
+        document.getElementById("profileDob").textContent =
+            formatDate(student.dob);
+
+        document.getElementById("profileGender").textContent =
+            student.gender || "-";
+
+        document.getElementById("profileClass").textContent =
+            student.className || "-";
+
+        document.getElementById("profileSection").textContent =
+            student.section || "-";
+
+        document.getElementById("profilePhone").textContent =
+            student.phone || "-";
+
+        document.getElementById("profileAdmission").textContent =
+            formatDate(student.admissionDate);
+
+        document.getElementById("profileAddress").textContent =
+            student.address || "-";
+
+
+        document
+            .getElementById("profileModal")
+            .classList.add("show");
+
+    }
+
+
+    /* SAVE SELECTED STUDENT ID */
+
+    function selectStudentForPage() {
+
+        if (!selectedProfileId) return;
+
+        localStorage.setItem(
+            "selectedStudentId",
+            selectedProfileId
+        );
+
+    }
+
+
+    /* CLOSE PROFILE */
+
+    function closeProfile() {
+
+        document
+            .getElementById("profileModal")
+            .classList.remove("show");
+
+    }
+
+
+    /* DELETE STUDENT + LINKED RECORDS */
+
+    function deleteStudent(id) {
+
+        const student =
+            students.find(item =>
+                String(item.id) === String(id)
+            );
+
+
+        if (!student) {
+
+            alert("Student not found.");
+
+            return;
+
+        }
+
+
+        const confirmed =
+            confirm(
+                `Delete student "${student.name}" (${student.id})?\n\nThis will also delete this student's Attendance, Fees and Results records.`
+            );
+
+
+        if (!confirmed) return;
+
+
+        /* DELETE STUDENT */
+
+        students =
+            students.filter(item =>
+                String(item.id) !== String(id)
+            );
+
+
+        localStorage.setItem(
+            "students",
+            JSON.stringify(students)
+        );
+
+
+        /* DELETE ATTENDANCE */
+
+        const attendance =
+            getData("attendance");
+
+
+        const filteredAttendance =
+            attendance.filter(record =>
+                String(record.studentId) !== String(id)
+            );
+
+
+        localStorage.setItem(
+            "attendance",
+            JSON.stringify(filteredAttendance)
+        );
+
+
+        /* DELETE FEES */
+
+        const fees =
+            getData("fees");
+
+
+        const filteredFees =
+            fees.filter(record =>
+                String(record.studentId) !== String(id)
+            );
+
+
+        localStorage.setItem(
+            "fees",
+            JSON.stringify(filteredFees)
+        );
+
+
+        /* DELETE RESULTS */
+
+        const results =
+            getData("results");
+
+
+        const filteredResults =
+            results.filter(record =>
+                String(record.studentId) !== String(id)
+            );
+
+
+        localStorage.setItem(
+            "results",
+            JSON.stringify(filteredResults)
+        );
+
+
+        /* REMOVE SELECTED STUDENT */
+
+        if (
+            String(localStorage.getItem("selectedStudentId")) ===
+            String(id)
+        ) {
+
+            localStorage.removeItem(
+                "selectedStudentId"
+            );
+
+        }
+
+
+        alert(
+            "Student and all linked records deleted successfully."
+        );
+
+
+        renderStudents();
+
+    }
+
+
+    /* LOGOUT */
+
+    function logout() {
+
+        localStorage.removeItem("isLoggedIn");
+
+        window.location.href = "index.html";
+
+    }
+
+
+    /* INITIAL LOAD */
+
+    renderStudents();
+
+</script>
+
+</body>
+</html>
